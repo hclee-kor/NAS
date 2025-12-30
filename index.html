@@ -19,12 +19,14 @@
 
         body { font-family: 'Segoe UI', 'Noto Sans KR', sans-serif; line-height: 1.6; color: var(--text); margin: 0; background: #edf2f7; }
         
+        /* Header */
         header { background: white; padding: 1rem 2rem; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; }
         h1 { margin: 0; font-size: 1.4rem; color: var(--primary); font-weight: 800; }
         select { padding: 0.4rem 1rem; border-radius: 20px; border: 1px solid var(--border); font-weight: bold; cursor: pointer; background: var(--light-bg); }
 
         .container { max-width: 960px; margin: 2rem auto; padding: 0 1rem; }
         
+        /* Collapsible Sections */
         details {
             background: white;
             border-radius: 12px;
@@ -33,7 +35,6 @@
             overflow: hidden;
             transition: all 0.3s ease;
         }
-        
         details[open] { box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
 
         summary {
@@ -50,7 +51,6 @@
             border-bottom: 1px solid transparent;
             transition: background-color 0.2s;
         }
-
         summary::-webkit-details-marker { display: none; }
         summary:hover { background-color: #f8f9fa; }
         details[open] summary { border-bottom: 1px solid var(--border); background-color: #f1f3f5; color: var(--accent); }
@@ -71,10 +71,42 @@
         td { background-color: white; vertical-align: top; }
         tr:nth-child(even) td { background-color: #fafafa; }
 
+        /* Images & Lightbox Trigger */
         .img-wrapper { text-align: center; margin: 2rem 0; padding: 15px; background: var(--light-bg); border-radius: 8px; border: 1px dashed #ccc; }
-        img { max-width: 100%; height: auto; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        
+        .img-wrapper img { 
+            max-height: 100px; /* ★ Max Height Constraint */
+            width: auto; 
+            max-width: 100%;
+            border-radius: 6px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+            cursor: zoom-in; /* Indicates clickable */
+            transition: transform 0.2s;
+        }
+        .img-wrapper img:hover { transform: scale(1.02); }
+
         .img-alt { color: #666; font-style: italic; display: block; margin-top: 10px; font-size: 0.9rem; }
 
+        /* Lightbox Modal */
+        #lightbox {
+            display: none; 
+            position: fixed; 
+            z-index: 2000; 
+            left: 0; top: 0; 
+            width: 100%; height: 100%; 
+            background-color: rgba(0,0,0,0.9); 
+            justify-content: center; 
+            align-items: center; 
+            cursor: zoom-out;
+        }
+        #lightbox img {
+            max-width: 95%; 
+            max-height: 95%; 
+            object-fit: contain; /* ★ Ensure full image visibility without cropping */
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+        }
+
+        /* Boxes */
         .box { padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0; font-size: 0.95rem; }
         .info { background: #e3f2fd; color: #0d47a1; border-left: 5px solid #2196f3; }
         .warning { background: var(--warn-bg); color: var(--warn-text); border-left: 5px solid #ffc107; }
@@ -85,6 +117,7 @@
         .bg-blue { background-color: #17a2b8; }
         .bg-red { background-color: #dc3545; }
         .bg-gray { background-color: #6c757d; }
+        .bg-black { background-color: #333; }
         
         .btn-look { background: #eee; border: 1px solid #ccc; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; font-family: monospace; color: #333; }
 
@@ -92,6 +125,10 @@
     </style>
 </head>
 <body>
+
+<div id="lightbox" onclick="closeLightbox()">
+    <img id="lightbox-img" src="" alt="Full Size">
+</div>
 
 <header>
     <h1>Smart NAS Tool v2.0</h1>
@@ -113,6 +150,7 @@
             <h3 data-i18n="s1_nas_def">NAS (Network Attached Storage)란?</h3>
             <p data-i18n="s1_nas_desc">인터넷에 연결된 대용량 중앙 저장소입니다. 개인용 외장하드와 달리 여러 사람이 동시에 접속할 수 있으며, 구글 드라이브처럼 직접 관리 및 운영이 가능한 사내 전용 클라우드입니다.</p>
             
+
             <div class="box info">
                 <strong data-i18n="s1_benefit_title">💡 NAS 사용의 핵심 장점</strong>
                 <ul>
@@ -177,7 +215,7 @@
             <p data-i18n="s2_desc">프로그램을 사용하기 위해 먼저 설치를 진행해 주세요.</p>
             
             <div class="img-wrapper">
-                <img src="images/install.gif" alt="Install" onerror="this.style.display='none'">
+                <img src="images/install.gif" alt="Install" onclick="openLightbox(this)">
                 <span class="img-alt" data-i18n="s2_img_alt">[설치 과정]</span>
             </div>
 
@@ -195,7 +233,7 @@
             <h3 data-i18n="s3_sub1">비밀번호 변경 (최초 1회 필수)</h3>
             <p data-i18n="s3_pw_desc">보안을 위해 초기 비밀번호는 반드시 변경해야 합니다.</p>
             <div class="img-wrapper">
-                <img src="images/password.gif" alt="Change Password" onerror="this.style.display='none'">
+                <img src="images/password.gif" alt="Change Password" onclick="openLightbox(this)">
                 <span class="img-alt" data-i18n="s3_img_alt">[비밀번호 변경 과정]</span>
             </div>
             
@@ -213,7 +251,7 @@
 
             <h3 data-i18n="s3_sub2">프로그램 로그인</h3>
             <div class="img-wrapper">
-                <img src="images/login.png" alt="Login Screen" onerror="this.style.display='none'">
+                <img src="images/login.png" alt="Login Screen" onclick="openLightbox(this)">
                 <span class="img-alt" data-i18n="s3_img_alt2">[프로그램 로그인 화면]</span>
             </div>
             
@@ -239,7 +277,7 @@
             <p data-i18n="s4_desc">파일을 업로드할 위치를 지정하거나, 새로운 폴더를 생성하는 방법입니다.</p>
             
             <div class="img-wrapper">
-                <img src="images/folder_browser.gif" alt="Folder Browser" onerror="this.style.display='none'">
+                <img src="images/folder_browser.gif" alt="Folder Browser" onclick="openLightbox(this)">
                 <span class="img-alt" data-i18n="s4_img_alt">[폴더 선택 및 생성 과정]</span>
             </div>
 
@@ -263,7 +301,7 @@
             </div>
 
             <div class="img-wrapper">
-                <img src="images/single_tab.gif" alt="Single Upload" onerror="this.style.display='none'">
+                <img src="images/single_tab.gif" alt="Single Upload" onclick="openLightbox(this)">
                 <span class="img-alt" data-i18n="s5_img_alt">[단일 파일 업로드 과정]</span>
             </div>
 
@@ -282,7 +320,7 @@
             <p data-i18n="s6_desc">여러 파일을 하나의 폴더에 담아 <strong>폴더 전체를 공유</strong>하는 가장 권장되는 방식입니다.</p>
             
             <div class="img-wrapper">
-                <img src="images/multi_tab.gif" alt="Multi Upload" onerror="this.style.display='none'">
+                <img src="images/multi_tab.gif" alt="Multi Upload" onclick="openLightbox(this)">
                 <span class="img-alt" data-i18n="s6_img_alt">[다중 파일 업로드 과정]</span>
             </div>
 
@@ -316,13 +354,13 @@
         <div class="content">
             <p data-i18n="s7_desc">업로드된 파일을 관리하거나 잊어버린 링크 주소를 확인합니다.</p>
             <div class="img-wrapper">
-                <img src="images/manage_tab.gif" alt="Manage Tab" onerror="this.style.display='none'">
+                <img src="images/manage_tab.gif" alt="Manage Tab" onclick="openLightbox(this)">
                 <span class="img-alt" data-i18n="s7_img_alt">[파일 관리 탭 (①좌측 트리 / ②우측 목록)]</span>
             </div>
             
             <ul>
-                <li data-i18n="s7_feat1"><strong>우클릭 메뉴 (① 좌측 폴더 트리):</strong> 마우스 우클릭 시 [새로고침], [이름 변경], [폴더 삭제]가 가능합니다.</li>
-                <li data-i18n="s7_feat2"><strong>파일 삭제 (② 우측 파일 목록):</strong> 파일을 선택하고 <span class="btn-look">파일 삭제</span> 버튼을 누르면 영구 삭제됩니다.</li>
+                <li data-i18n="s7_feat1"><strong>① 우클릭 메뉴 (좌측 트리):</strong> 마우스 우클릭 시 [새로고침], [이름 변경], [폴더 삭제]가 가능합니다.</li>
+                <li data-i18n="s7_feat2"><strong>② 파일 삭제 (우측 목록):</strong> 파일을 선택하고 <span class="btn-look">파일 삭제</span> 버튼을 누르면 영구 삭제됩니다.</li>
                 <li data-i18n="s7_feat3"><strong>링크 조회:</strong> <span class="btn-look">링크 조회</span> 버튼을 누르면 기존 링크 주소를 찾아 보여줍니다. (설정 유지)</li>
                 <li data-i18n="s7_feat4"><strong>링크 생성:</strong> <span class="badge bg-red" data-i18n="badge_caution">주의</span> <span class="btn-look">링크 생성</span> 버튼은 기존 설정을 무시하고 <strong>새로운 링크를 덮어씁니다.</strong></li>
             </ul>
@@ -336,6 +374,16 @@
 </div>
 
 <script>
+    // Lightbox Function
+    function openLightbox(img) {
+        document.getElementById('lightbox').style.display = 'flex';
+        document.getElementById('lightbox-img').src = img.src;
+    }
+    function closeLightbox() {
+        document.getElementById('lightbox').style.display = 'none';
+    }
+
+    // Translations
     const i18n = {
         kr: {
             s1_title: "1. NAS 및 Smart NAS Tool 소개",
@@ -364,16 +412,17 @@
             td_link: "링크 생성",
             td_web_link: "업로드 -> 공유 설정 -> 저장 -> 복사 (1~2분)",
             td_app_link: "<strong>업로드 즉시 링크 자동 생성 (10~20초)</strong>",
+            s1_img_alt: "[이미지: 기존 웹 방식 vs Smart NAS Tool 비교표]",
             s2_title: "2. 다운로드 및 설치",
             s2_desc: "프로그램을 사용하기 위해 먼저 설치를 진행해 주세요.",
-            s2_img_alt: "[설치 과정]",
+            s2_img_alt: "[설치 과정 (GIF)]",
             s2_step1: "배포된 링크 또는 메일에서 Smart_NAS_Tool_Setup.exe 파일을 다운로드합니다.",
             s2_step2: "다운로드한 파일을 실행합니다.",
             s2_step3: "화면의 안내에 따라 설치를 완료하면 바탕화면에 아이콘이 생성됩니다.",
             s3_title: "3. 초기 설정 및 로그인",
             s3_sub1: "비밀번호 변경 (최초 1회 필수)",
             s3_pw_desc: "보안을 위해 초기 비밀번호는 반드시 변경해야 합니다.",
-            s3_img_alt: "[비밀번호 변경 과정]",
+            s3_img_alt: "[비밀번호 변경 과정 (GIF)]",
             s3_pw_step1: "제공된 웹 링크에 접속하여 로그인합니다. (최초 접속 시 느릴 수 있음)",
             s3_pw_step2: "우측 상단의 <strong>사람 아이콘(User)</strong>을 클릭합니다.",
             s3_pw_step3: "<strong>개인(Personal)</strong> 메뉴를 선택합니다.",
@@ -390,7 +439,7 @@
             s3_log3: "저장: [로그인 및 설정 저장] 버튼을 누르면 다음부터 자동 로그인됩니다.",
             s4_title: "4. 폴더 선택 및 새 폴더 만들기",
             s4_desc: "파일을 업로드할 위치를 지정하거나, 새로운 폴더를 생성하는 방법입니다.",
-            s4_img_alt: "[폴더 선택 및 생성 과정]",
+            s4_img_alt: "[폴더 선택 및 생성 과정 (GIF)]",
             s4_step1: "업로드 탭에서 경로 옆의 [...] 버튼을 클릭합니다.",
             s4_step2: "폴더 선택: 목록에서 원하는 상위 폴더를 클릭합니다.",
             s4_step3: "새 폴더 만들기: 좌측 하단의 [새 폴더] 버튼을 클릭하고 이름을 입력하면 즉시 생성됩니다.",
@@ -399,14 +448,14 @@
             s5_desc: "파일 하나를 빠르게 공유할 때 사용합니다.",
             s5_warn_title: "⚠️ 주의사항: 폴더 공유와 혼동 금지",
             s5_warn_desc: "이미 '다중 파일 업로드'로 공유 중인 폴더에, 이 탭을 통해 파일을 추가하지 마세요. 여기서 올린 파일은 기존 폴더 링크에서 보이지 않으며, 별도의 링크가 생성됩니다.",
-            s5_img_alt: "[단일 파일 업로드 과정]",
+            s5_img_alt: "[단일 파일 업로드 과정 (GIF)]",
             s5_feat1: "파일 선택: 파일을 화면 중앙에 드래그하거나 [파일 찾기] 버튼을 사용합니다.",
             s5_feat2: "비밀번호: 파일별로 비밀번호를 설정할 수 있습니다.",
             s5_feat3: "링크 생성: 업로드 완료 시 하단에 링크가 자동 생성됩니다.",
             s5_note: "※ 여기서 선택한 업로드 경로는 '다중 파일 업로드' 탭의 경로와 별도로 저장됩니다.",
             s6_title: "6. 다중 파일 업로드 (핵심 기능)",
             s6_desc: "여러 파일을 하나의 폴더에 담아 폴더 전체를 공유하는 가장 권장되는 방식입니다.",
-            s6_img_alt: "[다중 파일 업로드 과정]",
+            s6_img_alt: "[다중 파일 업로드 과정 (GIF)]",
             s6_list_title: "파일 목록 관리",
             s6_add: "파일 추가: 탐색기에서 파일을 드래그하거나 [Add Files] 버튼을 누르세요.",
             s6_gray: "회색 배경: 이미 서버(NAS)에 올라가 있는 파일입니다.",
@@ -421,83 +470,84 @@
             s7_title: "7. 파일 관리 및 링크 조회",
             s7_desc: "업로드된 파일을 관리하거나 잊어버린 링크 주소를 확인합니다.",
             s7_img_alt: "[파일 관리 탭 (①좌측 트리 / ②우측 목록)]",
-            s7_feat1: "우클릭 메뉴 (① 좌측 폴더 트리): 마우스 우클릭 시 [새로고침], [이름 변경], [폴더 삭제]가 가능합니다.",
-            s7_feat2: "파일 삭제 (② 우측 파일 목록): 파일을 선택하고 [파일 삭제] 버튼을 누르면 영구 삭제됩니다.",
+            s7_feat1: "① 우클릭 메뉴 (좌측 트리): 마우스 우클릭 시 [새로고침], [이름 변경], [폴더 삭제]가 가능합니다.",
+            s7_feat2: "② 파일 삭제 (우측 목록): 파일을 선택하고 [파일 삭제] 버튼을 누르면 영구 삭제됩니다.",
             s7_feat3: "링크 조회: [링크 조회] 버튼을 누르면 기존 링크 주소를 찾아 보여줍니다. (설정 유지)",
             badge_caution: "주의",
             s7_feat4: "링크 생성: <span class='badge bg-red'>주의</span> [링크 생성] 버튼은 기존 설정을 무시하고 새로운 링크를 덮어씁니다."
         },
         en: {
             s1_title: "1. Intro to NAS & Smart NAS Tool",
-            s1_nas_def: "What is NAS (Network Attached Storage)?",
-            s1_nas_desc: "It is a high-capacity central storage connected to the internet. Unlike personal external drives, multiple users can access it simultaneously, acting as a private cloud like Google Drive.",
+            s1_nas_def: "What is NAS?",
+            s1_nas_desc: "It is a high-capacity central storage connected to the internet. Unlike external drives, it allows multiple users to access and manage files like a private cloud.",
             s1_benefit_title: "💡 Key Benefits",
-            s1_benefit1: "Data Assetization: Original data is safely preserved on the server even if a PC fails or is lost.",
-            s1_benefit2: "Dual Protection (RAID): Safety mechanisms ensure no data loss even if one hard disk inside the NAS fails.",
-            s1_benefit3: "Smart Sharing: Send download links instead of attaching files directly.",
+            s1_benefit1: "Data Assetization: Data is preserved on the server even if a PC fails.",
+            s1_benefit2: "Dual Protection (RAID): Prevents data loss even if a hard disk fails.",
+            s1_benefit3: "Smart Sharing: Send links instead of attaching large files.",
             s1_email_vs_link: "Email Attachment vs. Link Sharing",
-            s1_compare_desc: "Directly attaching large files to emails causes server overload and slows down internet speeds.",
+            s1_compare_desc: "Direct attachments cause server overload. Links are efficient.",
             th_email: "Email Attachment (Traditional)",
             th_link: "NAS Link Sharing (Recommended)",
-            td_email_1: "Server Overload (100MB traffic)",
+            td_email_1: "Server Overload (10MB x 10 = 100MB traffic)",
             td_link_1: "<strong>Drastic Traffic Reduction</strong>",
-            td_email_2: "Slow speed (External Network)",
+            td_email_2: "Slow & Limited (External Network)",
             td_link_2: "<strong>High Speed (Internal Network)</strong>",
             s1_tool_compare: "Why Smart NAS Tool?",
-            s1_tool_desc: "A dedicated program designed to resolve the complexity of browser-based access.",
+            s1_tool_desc: "Dedicated software to simplify complex browser access.",
             th_type: "Type",
-            th_web: "Default Program (Web Browser)",
-            th_app: "Smart NAS Tool v2.0 (App)",
-            td_access: "Access Method",
+            th_web: "Web Browser",
+            th_app: "Smart NAS Tool v2.0",
+            td_access: "Access",
             td_web_access: "Input Address -> ID/PW -> Login (Complex)",
-            td_app_access: "<strong>Run Program -> Auto Login (Simple)</strong>",
+            td_app_access: "<strong>Run App -> Auto Login (Simple)</strong>",
             td_link: "Link Creation",
             td_web_link: "Upload -> Settings -> Save (1-2 mins)",
-            td_app_link: "<strong>Instant Link Generation (10-20s)</strong>",
+            td_app_link: "<strong>Instant Auto-Link (10-20s)</strong>",
+            s1_img_alt: "[Image: Web vs App Comparison]",
             s2_title: "2. Download & Install",
             s2_desc: "Please install the program first.",
-            s2_img_alt: "[Installation Process]",
-            s2_step1: "Download Smart_NAS_Tool_Setup.exe from the provided link or email.",
+            s2_img_alt: "[Installation Process (GIF)]",
+            s2_step1: "Download Smart_NAS_Tool_Setup.exe from the link/email.",
             s2_step2: "Run the downloaded file.",
             s2_step3: "Follow instructions to complete installation.",
             s3_title: "3. Initial Setup & Login",
             s3_sub1: "Change Password (Required once)",
             s3_pw_desc: "You must change the default password for security.",
-            s3_img_alt: "[Password Change Process]",
-            s3_pw_step1: "Access the web link and login. (May be slow initially)",
-            s3_pw_step2: "Click the <strong>User Icon</strong> at the top right.",
+            s3_img_alt: "[Password Change Process (GIF)]",
+            s3_pw_step1: "Login to the web link. (May be slow initially)",
+            s3_pw_step2: "Click <strong>User Icon</strong> at top right.",
             s3_pw_step3: "Select <strong>Personal</strong> menu.",
-            s3_pw_step4: "Click <strong>Change Password</strong> to set a new one.",
+            s3_pw_step4: "Click <strong>Change Password</strong>.",
             s3_warn_title: "Password Rule:",
             s3_warn_desc: "Must be 8+ chars including Uppercase, Lowercase, and Numbers.",
             s3_sub2: "Program Login",
             s3_img_alt2: "[Login Screen]",
             s3_mode_title: "⚠️ Select Connection Mode (Important)",
             s3_mode1: "Internal (Local): Use ONLY inside [KMJ1 Corp] office.",
-            s3_mode2: "External (Public): Use this at other offices, home, or business trips.",
-            s3_log1: "Language: Change language at top right.",
-            s3_log2: "Input: Enter IP, ID, and the changed password.",
-            s3_log3: "Save: Click [Login & Save] for auto-login next time.",
+            s3_mode2: "External (Public): Use this at other offices, home, or trips.",
+            s3_log1: "Language: Change at top right.",
+            s3_log2: "Input: IP, ID, and new password.",
+            s3_log3: "Save: Click [Login & Save] for auto-login.",
             s4_title: "4. Selecting & Creating Folders",
-            s4_desc: "How to choose upload location or create new folders.",
-            s4_img_alt: "[Folder Selection & Creation]",
-            s4_step1: "Click [...] button next to path in upload tab.",
-            s4_step2: "Select Folder: Click parent folder from list.",
-            s4_step3: "Create Folder: Click [New Folder] at bottom left, enter name.",
-            s4_step4: "With final folder selected (blue), click [Select].",
+            s4_desc: "Choose upload location or create new folders.",
+            s4_img_alt: "[Folder Selection & Creation (GIF)]",
+            s4_step1: "Click [...] button next to path.",
+            s4_step2: "Select Folder: Click parent folder.",
+            s4_step3: "Create Folder: Click [New Folder], enter name.",
+            s4_step4: "Select final folder (blue) and click [Select].",
             s5_title: "5. Single File Upload",
-            s5_desc: "Use to quickly share one file.",
+            s5_desc: "Quickly share one file.",
             s5_warn_title: "⚠️ Caution: Don't mix with Folder Share",
-            s5_warn_desc: "Do not add files here to a folder already shared via 'Multi-File Upload'. Files uploaded here won't show in the existing folder link.",
-            s5_img_alt: "[Single File Upload Process]",
-            s5_feat1: "Select File: Drag & Drop or use [Select File] button.",
-            s5_feat2: "Password: Can set individual passwords per file.",
-            s5_feat3: "Link: Generated automatically at bottom upon completion.",
-            s5_note: "※ Path selected here is saved separately from Multi-Upload tab.",
+            s5_warn_desc: "Don't add files here to a 'Multi-Upload' shared folder. It creates a separate link.",
+            s5_img_alt: "[Single File Upload Process (GIF)]",
+            s5_feat1: "Select File: Drag & Drop or use button.",
+            s5_feat2: "Password: Set per file.",
+            s5_feat3: "Link: Auto-generated at bottom.",
+            s5_note: "※ Path is saved separately from Multi-Upload tab.",
             s6_title: "6. Multi-File Upload (Core Feature)",
-            s6_desc: "Recommended. Shares the entire folder containing multiple files.",
-            s6_img_alt: "[Multi-File Upload Process]",
-            s6_list_title: "Managing File List",
+            s6_desc: "Share entire folder with multiple files. Recommended.",
+            s6_img_alt: "[Multi-File Upload Process (GIF)]",
+            s6_list_title: "File List Management",
             s6_add: "Add Files: Drag & Drop or click [Add Files].",
             s6_gray: "Gray BG: Files already on server.",
             s6_white: "White BG: Files you just added (Pending).",
@@ -509,207 +559,209 @@
             desc_append: ": Use to ADD files. Keeps existing link/password.",
             s6_popup: "※ Confirmation popup appears for safety.",
             s7_title: "7. File Manage & Check Link",
-            s7_desc: "Manage uploaded files or retrieve lost links.",
+            s7_desc: "Manage files or retrieve links.",
             s7_img_alt: "[File Manage Tab (①Left Tree / ②Right List)]",
-            s7_feat1: "Context Menu (① Left Tree): Right-click to [Refresh], [Rename], or [Delete].",
-            s7_feat2: "Delete File (② Right List): Select file and click [Delete File].",
-            s7_feat3: "Lookup Link: Click [Lookup Link] to see existing address.",
+            s7_feat1: "① Context Menu (Left Tree): Right-click to [Refresh], [Rename], [Delete].",
+            s7_feat2: "② Delete File (Right List): Select file and click [Delete File].",
+            s7_feat3: "Lookup Link: Click [Lookup Link] to see address.",
             badge_caution: "Caution",
-            s7_feat4: "Create Link: <span class='badge bg-red'>Caution</span> [Create Link] overwrites with NEW link."
+            s7_feat4: "Create Link: <span class='badge bg-red'>Caution</span> [Create Link] overwrites settings."
         },
         id: {
             s1_title: "1. Pengantar NAS & Smart Tool",
             s1_nas_def: "Apa itu NAS?",
-            s1_nas_desc: "Penyimpanan pusat berkapasitas besar yang terhubung ke internet. Berbeda dengan hard drive eksternal, ini memungkinkan akses banyak pengguna secara bersamaan.",
-            s1_benefit_title: "💡 Manfaat Utama NAS",
+            s1_nas_desc: "Penyimpanan pusat berkapasitas besar. Beda dengan harddisk eksternal, ini bisa diakses banyak orang seperti cloud pribadi.",
+            s1_benefit_title: "💡 Manfaat Utama",
             s1_benefit1: "Aset Data: Data aman di server meski PC rusak.",
-            s1_benefit2: "Perlindungan Ganda (RAID): Tidak ada data hilang meski satu hard disk rusak.",
-            s1_benefit3: "Berbagi Cerdas: Kirim tautan unduhan, bukan lampiran file.",
-            s1_email_vs_link: "Lampiran Email vs Berbagi Tautan",
-            s1_compare_desc: "Melampirkan file besar langsung menyebabkan kelebihan beban server.",
+            s1_benefit2: "Perlindungan Ganda (RAID): Data aman meski harddisk rusak.",
+            s1_benefit3: "Berbagi Cerdas: Kirim tautan, bukan lampiran.",
+            s1_email_vs_link: "Lampiran vs Tautan",
+            s1_compare_desc: "Lampiran bikin server lambat.",
             th_email: "Lampiran Email (Lama)",
             th_link: "Tautan NAS (Disarankan)",
-            td_email_1: "Server Overload (100MB lalu lintas)",
-            td_link_1: "<strong>Pengurangan Trafik Drastis</strong>",
+            td_email_1: "Server Overload (Trafik tinggi)",
+            td_link_1: "<strong>Trafik Berkurang Drastis</strong>",
             td_email_2: "Lambat & Terbatas (Jaringan Luar)",
             td_link_2: "<strong>Sangat Cepat (Jaringan Kantor)</strong>",
             s1_tool_compare: "Mengapa Smart NAS Tool?",
-            s1_tool_desc: "Program khusus untuk mengatasi kerumitan akses browser.",
+            s1_tool_desc: "Software khusus untuk akses mudah tanpa browser.",
             th_type: "Tipe",
-            th_web: "Program Web (Standar)",
+            th_web: "Web Browser",
             th_app: "Smart NAS Tool v2.0",
-            td_access: "Cara Akses",
-            td_web_access: "Browser -> ID/PW -> Login (Rumit)",
-            td_app_access: "<strong>Buka Program -> Login Otomatis (Mudah)</strong>",
+            td_access: "Akses",
+            td_web_access: "Input Alamat -> ID/PW -> Login (Rumit)",
+            td_app_access: "<strong>Buka App -> Login Otomatis (Mudah)</strong>",
             td_link: "Buat Tautan",
-            td_web_link: "Unggah -> Pengaturan -> Simpan (1-2 mnt)",
-            td_app_link: "<strong>Tautan Otomatis Instan (10-20 dtk)</strong>",
+            td_web_link: "Unggah -> Seting -> Simpan (1-2 mnt)",
+            td_app_link: "<strong>Tautan Instan (10-20 dtk)</strong>",
+            s1_img_alt: "[Gambar: Perbandingan Web vs App]",
             s2_title: "2. Unduh & Instal",
-            s2_desc: "Silakan instal program terlebih dahulu.",
-            s2_img_alt: "[Proses Instalasi]",
-            s2_step1: "Unduh Smart_NAS_Tool_Setup.exe dari tautan atau email.",
-            s2_step2: "Jalankan file yang diunduh.",
-            s2_step3: "Ikuti petunjuk instalasi hingga ikon muncul di desktop.",
+            s2_desc: "Instal program dulu.",
+            s2_img_alt: "[Proses Instalasi (GIF)]",
+            s2_step1: "Unduh Smart_NAS_Tool_Setup.exe.",
+            s2_step2: "Jalankan file.",
+            s2_step3: "Ikuti petunjuk instalasi.",
             s3_title: "3. Pengaturan Awal & Login",
-            s3_sub1: "Ganti Kata Sandi (Wajib 1x)",
-            s3_pw_desc: "Demi keamanan, kata sandi awal harus diubah.",
-            s3_img_alt: "[Proses Ganti Kata Sandi]",
-            s3_pw_step1: "Akses tautan web dan masuk. (Mungkin lambat di awal)",
-            s3_pw_step2: "Klik <strong>Ikon Pengguna</strong> di kanan atas.",
-            s3_pw_step3: "Pilih menu <strong>Pribadi (Personal)</strong>.",
-            s3_pw_step4: "Klik tombol <strong>Ganti Kata Sandi</strong>.",
+            s3_sub1: "Ganti Sandi (Wajib 1x)",
+            s3_pw_desc: "Harus ganti sandi awal demi keamanan.",
+            s3_img_alt: "[Proses Ganti Sandi (GIF)]",
+            s3_pw_step1: "Login di web (Mungkin lambat di awal).",
+            s3_pw_step2: "Klik <strong>Ikon User</strong> di kanan atas.",
+            s3_pw_step3: "Pilih menu <strong>Pribadi</strong>.",
+            s3_pw_step4: "Klik <strong>Ganti Kata Sandi</strong>.",
             s3_warn_title: "Aturan Sandi:",
             s3_warn_desc: "8+ karakter, Huruf Besar, Kecil, Angka.",
             s3_sub2: "Login Program",
             s3_img_alt2: "[Layar Login]",
-            s3_mode_title: "⚠️ Pilih Mode Koneksi (Sangat Penting)",
-            s3_mode1: "Internal (Lokal): HANYA di kantor [KMJ1 Corp] (tempat NAS berada). Tercepat.",
-            s3_mode2: "Eksternal (Publik): Wajib pilih ini di kantor lain, rumah, atau luar.",
+            s3_mode_title: "⚠️ Pilih Mode Koneksi (Penting)",
+            s3_mode1: "Internal (Lokal): HANYA di kantor [KMJ1 Corp].",
+            s3_mode2: "Eksternal (Publik): Di kantor lain, rumah, luar.",
             s3_log1: "Bahasa: Ubah di kanan atas.",
-            s3_log2: "Input: Masukkan IP, ID, dan sandi baru.",
-            s3_log3: "Simpan: Klik [Masuk & Simpan] untuk login otomatis nanti.",
+            s3_log2: "Input: IP, ID, sandi baru.",
+            s3_log3: "Simpan: Klik [Masuk & Simpan].",
             s4_title: "4. Pilih & Buat Folder",
-            s4_desc: "Cara memilih lokasi unggah atau membuat folder baru.",
-            s4_img_alt: "[Proses Pilih & Buat Folder]",
+            s4_desc: "Pilih lokasi simpan atau buat folder baru.",
+            s4_img_alt: "[Pilih & Buat Folder (GIF)]",
             s4_step1: "Klik tombol [...] di tab unggah.",
             s4_step2: "Pilih Folder: Klik folder induk.",
-            s4_step3: "Buat Baru: Klik [Folder Baru] di kiri bawah, beri nama.",
-            s4_step4: "Pilih folder akhir (biru) lalu klik [Pilih].",
+            s4_step3: "Buat Baru: Klik [Folder Baru], beri nama.",
+            s4_step4: "Pilih folder akhir (biru) lalu [Pilih].",
             s5_title: "5. Unggah File Tunggal",
-            s5_desc: "Untuk berbagi satu file dengan cepat.",
-            s5_warn_title: "⚠️ Awas: Jangan Campur dengan Berbagi Folder",
-            s5_warn_desc: "Jangan tambah file di sini ke folder yang sudah dibagi lewat 'Unggah Multi'. File ini tidak akan muncul di tautan folder lama.",
-            s5_img_alt: "[Proses Unggah File Tunggal]",
-            s5_feat1: "Pilih File: Seret & Lepas atau tombol [Cari File].",
-            s5_feat2: "Sandi: Bisa atur per file.",
-            s5_feat3: "Tautan: Otomatis muncul di bawah saat selesai.",
-            s5_note: "※ Jalur di sini disimpan terpisah dari tab Multi.",
-            s6_title: "6. Unggah Multi-File (Fitur Utama)",
-            s6_desc: "Berbagi seluruh folder berisi banyak file. Sangat disarankan.",
-            s6_img_alt: "[Proses Unggah Multi-File]",
+            s5_desc: "Berbagi satu file cepat.",
+            s5_warn_title: "⚠️ Awas: Jangan Campur Aduk",
+            s5_warn_desc: "Jangan tambah file di sini ke folder 'Unggah Multi'. Tautan terpisah dibuat.",
+            s5_img_alt: "[Proses Unggah Tunggal (GIF)]",
+            s5_feat1: "Pilih File: Seret atau tombol.",
+            s5_feat2: "Sandi: Bisa per file.",
+            s5_feat3: "Tautan: Otomatis muncul di bawah.",
+            s5_note: "※ Jalur disimpan terpisah dari tab Multi.",
+            s6_title: "6. Unggah Multi-File (Inti)",
+            s6_desc: "Berbagi satu folder isi banyak file. Disarankan.",
+            s6_img_alt: "[Proses Unggah Multi (GIF)]",
             s6_list_title: "Manajemen Daftar",
-            s6_add: "Tambah: Seret & Lepas atau [Add Files].",
-            s6_gray: "Abu-abu: File sudah ada di server.",
+            s6_add: "Tambah: Seret atau [Add Files].",
+            s6_gray: "Abu-abu: File di server.",
             s6_white: "Putih: File baru (Menunggu).",
-            s6_clear: "Bersihkan: [Clear List] hanya hapus file putih.",
-            s6_btn_title: "Penting: Perbedaan Tombol",
+            s6_clear: "Bersihkan: [Clear List] hapus file putih saja.",
+            s6_btn_title: "Penting: Beda Tombol",
             btn_upload: "Unggah & Buat Tautan",
-            desc_upload: ": Gunakan PERTAMA kali. Unggah & buat tautan BARU (sandi).",
+            desc_upload: ": Gunakan PERTAMA kali. Buat tautan BARU (sandi).",
             btn_append: "Unggah Tambahan",
-            desc_append: ": Untuk MENAMBAH file. Tautan & sandi lama TETAP.",
-            s6_popup: "※ Popup konfirmasi muncul demi keamanan.",
+            desc_append: ": Untuk TAMBAH file. Tautan lama TETAP.",
+            s6_popup: "※ Konfirmasi muncul demi keamanan.",
             s7_title: "7. Kelola & Cek Tautan",
             s7_desc: "Kelola file atau lihat tautan.",
-            s7_img_alt: "[Tab Kelola File (①Pohon Kiri / ②Daftar Kanan)]",
-            s7_feat1: "Menu Konteks (① Kiri): Klik Kanan untuk [Segarkan], [Ganti Nama], [Hapus Folder].",
-            s7_feat2: "Hapus File (② Kanan): Pilih file dan klik [Hapus File].",
-            s7_feat3: "Cek Tautan: Klik [Cek Tautan] untuk lihat alamat lama.",
+            s7_img_alt: "[Tab Kelola (①Kiri / ②Kanan)]",
+            s7_feat1: "① Menu (Kiri): Klik kanan [Segarkan], [Ganti Nama], [Hapus].",
+            s7_feat2: "② Hapus (Kanan): Pilih file, klik [Hapus File].",
+            s7_feat3: "Cek Tautan: Klik [Cek Tautan] lihat alamat.",
             badge_caution: "Awas",
-            s7_feat4: "Buat Tautan: <span class='badge bg-red'>Awas</span> [Buat Tautan] menimpa dengan tautan BARU."
+            s7_feat4: "Buat Tautan: <span class='badge bg-red'>Awas</span> [Buat Tautan] menimpa pengaturan."
         },
         vn: {
             s1_title: "1. Giới thiệu NAS & Smart Tool",
             s1_nas_def: "NAS là gì?",
-            s1_nas_desc: "Bộ nhớ trung tâm dung lượng lớn kết nối internet. Khác với ổ cứng ngoài, nhiều người có thể truy cập cùng lúc.",
+            s1_nas_desc: "Bộ nhớ trung tâm lớn kết nối internet. Nhiều người truy cập cùng lúc như đám mây riêng.",
             s1_benefit_title: "💡 Lợi ích chính",
-            s1_benefit1: "Tài sản hóa dữ liệu: Dữ liệu an toàn trên máy chủ dù PC hỏng.",
+            s1_benefit1: "Tài sản hóa: Dữ liệu an toàn dù PC hỏng.",
             s1_benefit2: "Bảo vệ kép (RAID): Không mất dữ liệu dù ổ cứng hỏng.",
-            s1_benefit3: "Chia sẻ thông minh: Gửi liên kết thay vì đính kèm tệp.",
-            s1_email_vs_link: "Đính kèm Email vs Liên kết",
-            s1_compare_desc: "Đính kèm trực tiếp gây quá tải máy chủ.",
+            s1_benefit3: "Chia sẻ thông minh: Gửi link thay vì đính kèm.",
+            s1_email_vs_link: "Đính kèm Email vs Link",
+            s1_compare_desc: "Đính kèm gây quá tải server.",
             th_email: "Đính kèm Email (Cũ)",
-            th_link: "Chia sẻ Liên kết (Khuyên dùng)",
-            td_email_1: "Quá tải máy chủ (100MB lưu lượng)",
+            th_link: "Chia sẻ Link NAS (Nên dùng)",
+            td_email_1: "Quá tải Server (Lưu lượng lớn)",
             td_link_1: "<strong>Giảm lưu lượng đáng kể</strong>",
             td_email_2: "Chậm & Giới hạn (Mạng ngoài)",
             td_link_2: "<strong>Siêu tốc (Mạng nội bộ)</strong>",
             s1_tool_compare: "Tại sao chọn Smart NAS Tool?",
-            s1_tool_desc: "Chương trình giải quyết sự phức tạp của web.",
+            s1_tool_desc: "Phần mềm giải quyết sự phức tạp của web.",
             th_type: "Loại",
-            th_web: "Chương trình Web",
+            th_web: "Trình duyệt Web",
             th_app: "Smart NAS Tool v2.0",
-            td_access: "Cách truy cập",
-            td_web_access: "Trình duyệt -> ID/PW -> Đăng nhập (Phức tạp)",
-            td_app_access: "<strong>Chạy App -> Đăng nhập tự động (Dễ)</strong>",
-            td_link: "Tạo liên kết",
-            td_web_link: "Tải lên -> Cài đặt -> Lưu (1-2 phút)",
-            td_app_link: "<strong>Tạo link ngay lập tức (10-20 giây)</strong>",
-            s2_title: "2. Tải xuống & Cài đặt",
-            s2_desc: "Vui lòng cài đặt chương trình trước.",
-            s2_img_alt: "[Quy trình Cài đặt]",
-            s2_step1: "Tải Smart_NAS_Tool_Setup.exe từ link hoặc email.",
-            s2_step2: "Chạy file vừa tải.",
-            s2_step3: "Làm theo hướng dẫn để hoàn tất. Biểu tượng sẽ hiện trên màn hình.",
+            td_access: "Truy cập",
+            td_web_access: "Nhập địa chỉ -> ID/PW -> Login (Khó)",
+            td_app_access: "<strong>Chạy App -> Login tự động (Dễ)</strong>",
+            td_link: "Tạo Link",
+            td_web_link: "Upload -> Cài đặt -> Lưu (1-2 phút)",
+            td_app_link: "<strong>Tạo link ngay lập tức (10-20s)</strong>",
+            s1_img_alt: "[Hình ảnh: So sánh Web vs App]",
+            s2_title: "2. Tải & Cài đặt",
+            s2_desc: "Vui lòng cài đặt trước.",
+            s2_img_alt: "[Quy trình Cài đặt (GIF)]",
+            s2_step1: "Tải Smart_NAS_Tool_Setup.exe.",
+            s2_step2: "Chạy file tải về.",
+            s2_step3: "Làm theo hướng dẫn cài đặt.",
             s3_title: "3. Thiết lập đầu & Đăng nhập",
             s3_sub1: "Đổi mật khẩu (Bắt buộc 1 lần)",
-            s3_pw_desc: "Vì bảo mật, phải đổi mật khẩu ban đầu.",
-            s3_img_alt: "[Quy trình Đổi Mật Khẩu]",
-            s3_pw_step1: "Truy cập web và đăng nhập. (Có thể chậm lúc đầu)",
-            s3_pw_step2: "Nhấn vào <strong>Biểu tượng Người dùng</strong> ở góc phải trên.",
-            s3_pw_step3: "Chọn menu <strong>Cá nhân (Personal)</strong>.",
-            s3_pw_step4: "Nhấn nút <strong>Đổi Mật Khẩu</strong> để thiết lập mới.",
+            s3_pw_desc: "Phải đổi mật khẩu mặc định để bảo mật.",
+            s3_img_alt: "[Quy trình Đổi Mật Khẩu (GIF)]",
+            s3_pw_step1: "Vào web và đăng nhập (Có thể chậm lúc đầu).",
+            s3_pw_step2: "Nhấn <strong>Icon User</strong> góc phải trên.",
+            s3_pw_step3: "Chọn menu <strong>Cá nhân</strong>.",
+            s3_pw_step4: "Nhấn <strong>Đổi Mật Khẩu</strong>.",
             s3_warn_title: "Quy tắc:",
             s3_warn_desc: "8+ ký tự, Chữ hoa, thường, Số.",
-            s3_sub2: "Đăng nhập",
+            s3_sub2: "Đăng nhập App",
             s3_img_alt2: "[Màn hình Đăng nhập]",
-            s3_mode_title: "⚠️ Chọn Chế độ (Rất quan trọng)",
-            s3_mode1: "Nội bộ (Local): CHỈ dùng tại văn phòng [KMJ1 Corp] (nơi đặt NAS). Nhanh nhất.",
-            s3_mode2: "Bên ngoài (Public): Bắt buộc chọn khi ở công ty khác, nhà riêng, công tác.",
+            s3_mode_title: "⚠️ Chọn Chế độ (Quan trọng)",
+            s3_mode1: "Nội bộ (Local): CHỈ dùng tại văn phòng [KMJ1 Corp].",
+            s3_mode2: "Bên ngoài (Public): Dùng ở công ty khác, nhà riêng.",
             s3_log1: "Ngôn ngữ: Đổi ở góc phải.",
-            s3_log2: "Nhập liệu: IP, ID và mật khẩu mới.",
-            s3_log3: "Lưu: Nhấn [Đăng nhập & Lưu] để tự động lần sau.",
+            s3_log2: "Nhập: IP, ID, mật khẩu mới.",
+            s3_log3: "Lưu: Nhấn [Đăng nhập & Lưu].",
             s4_title: "4. Chọn & Tạo Thư mục",
-            s4_desc: "Cách chọn nơi tải lên hoặc tạo thư mục mới.",
-            s4_img_alt: "[Quy trình Chọn & Tạo Thư mục]",
-            s4_step1: "Nhấn nút [...] ở tab tải lên.",
-            s4_step2: "Chọn thư mục: Nhấn vào thư mục cha.",
-            s4_step3: "Tạo mới: Nhấn [Thư mục mới] góc trái, nhập tên.",
-            s4_step4: "Chọn thư mục đích và nhấn [Chọn].",
+            s4_desc: "Chọn nơi lưu hoặc tạo mới.",
+            s4_img_alt: "[Chọn & Tạo Thư mục (GIF)]",
+            s4_step1: "Nhấn nút [...] ở tab upload.",
+            s4_step2: "Chọn thư mục: Nhấn thư mục cha.",
+            s4_step3: "Tạo mới: Nhấn [Thư mục mới], nhập tên.",
+            s4_step4: "Chọn thư mục cuối (xanh) rồi [Chọn].",
             s5_title: "5. Tải tệp đơn",
-            s5_desc: "Dùng để chia sẻ nhanh 1 tệp.",
-            s5_warn_title: "⚠️ Chú ý: Không trộn với Chia sẻ Thư mục",
-            s5_warn_desc: "Không thêm tệp tại đây vào thư mục đang chia sẻ 'Nhiều tệp'. Tệp này sẽ không hiện trong link cũ.",
-            s5_img_alt: "[Quy trình Tải Tệp Đơn]",
-            s5_feat1: "Chọn tệp: Kéo thả hoặc nút [Chọn tệp].",
+            s5_desc: "Chia sẻ nhanh 1 tệp.",
+            s5_warn_title: "⚠️ Chú ý: Không trộn lẫn",
+            s5_warn_desc: "Không thêm file ở đây vào thư mục 'Tải nhiều tệp'. Tạo link riêng biệt.",
+            s5_img_alt: "[Quy trình Tải đơn (GIF)]",
+            s5_feat1: "Chọn tệp: Kéo thả hoặc nút.",
             s5_feat2: "Mật khẩu: Đặt riêng từng tệp.",
-            s5_feat3: "Link: Tự động hiện bên dưới khi xong.",
-            s5_note: "※ Đường dẫn ở đây lưu riêng với tab Nhiều tệp.",
-            s6_title: "6. Tải nhiều tệp (Tính năng chính)",
-            s6_desc: "Chia sẻ cả thư mục chứa nhiều tệp. Khuyên dùng.",
-            s6_img_alt: "[Quy trình Tải Nhiều Tệp]",
+            s5_feat3: "Link: Tự động hiện bên dưới.",
+            s5_note: "※ Đường dẫn lưu riêng với tab Nhiều tệp.",
+            s6_title: "6. Tải nhiều tệp (Chính)",
+            s6_desc: "Chia sẻ cả thư mục. Khuyên dùng.",
+            s6_img_alt: "[Quy trình Tải nhiều tệp (GIF)]",
             s6_list_title: "Quản lý danh sách",
             s6_add: "Thêm: Kéo thả hoặc [Add Files].",
-            s6_gray: "Xám: Tệp đã có trên server.",
-            s6_white: "Trắng: Tệp mới thêm (Chờ tải).",
-            s6_clear: "Xóa: [Clear List] chỉ xóa tệp trắng.",
+            s6_gray: "Xám: File đã có trên server.",
+            s6_white: "Trắng: File mới (Chờ tải).",
+            s6_clear: "Xóa: [Clear List] chỉ xóa file trắng.",
             s6_btn_title: "Quan trọng: Khác biệt nút",
             btn_upload: "Tải lên & Tạo chia sẻ",
-            desc_upload: ": Dùng lần ĐẦU. Tải và tạo link MỚI (mật khẩu).",
+            desc_upload: ": Dùng lần ĐẦU. Tạo link MỚI (mật khẩu).",
             btn_append: "Tải lên bổ sung",
             desc_append: ": Dùng để THÊM tệp. Giữ nguyên link cũ.",
             s6_popup: "※ Cửa sổ xác nhận sẽ hiện để an toàn.",
             s7_title: "7. Quản lý & Kiểm tra Link",
-            s7_desc: "Quản lý tệp hoặc tìm lại link.",
+            s7_desc: "Quản lý tệp hoặc xem link.",
             s7_img_alt: "[Tab Quản lý (①Cây Trái / ②Danh sách Phải)]",
-            s7_feat1: "Menu (① Trái): Chuột phải để [Làm mới], [Đổi tên], [Xóa].",
-            s7_feat2: "Xóa tệp (② Phải): Chọn tệp và nhấn [Xóa tệp].",
-            s7_feat3: "Tra cứu: Nhấn [Tra cứu] để xem link cũ.",
+            s7_feat1: "① Menu (Trái): Chuột phải [Làm mới], [Đổi tên], [Xóa].",
+            s7_feat2: "② Xóa (Phải): Chọn tệp, nhấn [Xóa tệp].",
+            s7_feat3: "Tra cứu: Nhấn [Tra cứu] xem link cũ.",
             badge_caution: "Chú ý",
-            s7_feat4: "Tạo link: <span class='badge bg-red'>Chú ý</span> [Tạo link] sẽ ghi đè link MỚI."
+            s7_feat4: "Tạo link: <span class='badge bg-red'>Chú ý</span> [Tạo link] ghi đè link MỚI."
         },
         cn: {
             s1_title: "1. NAS 与 Smart Tool 介绍",
             s1_nas_def: "什么是 NAS?",
-            s1_nas_desc: "连接互联网的大容量中央存储。多用户可同时访问。",
+            s1_nas_desc: "连接互联网的大容量存储。多用户可像私有云一样同时访问。",
             s1_benefit_title: "💡 核心优势",
-            s1_benefit1: "数据资产化: 电脑故障数据也不丢失。",
-            s1_benefit2: "双重保护 (RAID): 硬盘损坏数据依然安全。",
-            s1_benefit3: "智能分享: 发送下载链接而非附件。",
+            s1_benefit1: "数据资产化: 电脑故障数据也安全。",
+            s1_benefit2: "双重保护 (RAID): 硬盘损坏数据不丢。",
+            s1_benefit3: "智能分享: 发送链接而非附件。",
             s1_email_vs_link: "邮件附件 vs 链接分享",
             s1_compare_desc: "直接附件导致服务器过载。",
             th_email: "邮件附件 (传统)",
             th_link: "NAS 链接 (推荐)",
-            td_email_1: "服务器过载 (100MB 流量)",
+            td_email_1: "服务器过载 (流量大)",
             td_link_1: "<strong>流量大幅减少</strong>",
             td_email_2: "速度慢 (外网)",
             td_link_2: "<strong>超高速 (内网)</strong>",
@@ -718,164 +770,166 @@
             th_type: "类型",
             th_web: "网页程序",
             th_app: "Smart NAS Tool v2.0",
-            td_access: "访问方式",
+            td_access: "访问",
             td_web_access: "输入地址 -> ID/PW -> 登录 (复杂)",
             td_app_access: "<strong>运行程序 -> 自动登录 (简单)</strong>",
             td_link: "生成链接",
             td_web_link: "上传 -> 设置 -> 保存 (1-2分钟)",
-            td_app_link: "<strong>上传即生成链接 (10-20秒)</strong>",
+            td_app_link: "<strong>上传即生成 (10-20秒)</strong>",
+            s1_img_alt: "[图片: Web 与 App 对比]",
             s2_title: "2. 下载与安装",
             s2_desc: "请先安装程序。",
-            s2_img_alt: "[安装过程]",
-            s2_step1: "从链接或邮件下载 Smart_NAS_Tool_Setup.exe。",
-            s2_step2: "运行下载的文件。",
-            s2_step3: "按照提示完成安装，桌面会出现图标。",
+            s2_img_alt: "[安装过程 (GIF)]",
+            s2_step1: "下载 Smart_NAS_Tool_Setup.exe。",
+            s2_step2: "运行文件。",
+            s2_step3: "按提示完成安装。",
             s3_title: "3. 初始设置与登录",
             s3_sub1: "更改密码 (首次必做)",
-            s3_pw_desc: "为了安全，必须更改初始密码。",
-            s3_img_alt: "[更改密码过程]",
-            s3_pw_step1: "访问网页链接并登录 (首次可能较慢)",
-            s3_pw_step2: "点击右上角的 <strong>用户图标</strong>。",
-            s3_pw_step3: "选择 <strong>个人 (Personal)</strong> 菜单。",
-            s3_pw_step4: "点击 <strong>更改密码</strong> 按钮进行设置。",
-            s3_warn_title: "密码规则:",
-            s3_warn_desc: "8位以上，含大写、小写字母和数字。",
+            s3_pw_desc: "必须更改初始密码以保安全。",
+            s3_img_alt: "[更改密码过程 (GIF)]",
+            s3_pw_step1: "登录网页 (首次可能慢)。",
+            s3_pw_step2: "点击右上角 <strong>用户图标</strong>。",
+            s3_pw_step3: "选择 <strong>个人</strong> 菜单。",
+            s3_pw_step4: "点击 <strong>更改密码</strong>。",
+            s3_warn_title: "规则:",
+            s3_warn_desc: "8位以上，含大写、小写、数字。",
             s3_sub2: "程序登录",
             s3_img_alt2: "[登录界面]",
-            s3_mode_title: "⚠️ 选择连接模式 (非常重要)",
-            s3_mode1: "内网 (Local): 仅在 [KMJ1 法人] 办公室内使用 (NAS 所在地)。最快。",
-            s3_mode2: "外网 (Public): 在其他公司、家中或出差时必须选择此项。",
+            s3_mode_title: "⚠️ 选择连接模式 (重要)",
+            s3_mode1: "内网 (Local): 仅在 [KMJ1 法人] 办公室。",
+            s3_mode2: "外网 (Public): 在其他公司、家中。",
             s3_log1: "语言: 右上角切换。",
-            s3_log2: "输入: IP, ID 和新密码。",
-            s3_log3: "保存: 点击 [登录并保存] 以便下次自动登录。",
+            s3_log2: "输入: IP, ID, 新密码。",
+            s3_log3: "保存: 点击 [登录并保存]。",
             s4_title: "4. 选择与新建文件夹",
-            s4_desc: "指定上传位置或创建新文件夹的方法。",
-            s4_img_alt: "[选择与创建文件夹]",
-            s4_step1: "点击上传标签页路径旁的 [...] 按钮。",
+            s4_desc: "选择位置或新建文件夹。",
+            s4_img_alt: "[选择与创建文件夹 (GIF)]",
+            s4_step1: "点击 [...] 按钮。",
             s4_step2: "选择文件夹: 点击父文件夹。",
-            s4_step3: "新建: 点击左下角 [新建文件夹] 并输入名称。",
-            s4_step4: "选中最终文件夹 (蓝色) 后点击 [选择]。",
+            s4_step3: "新建: 点击 [新建文件夹], 输入名称。",
+            s4_step4: "选中文件夹 (蓝) 后点击 [选择]。",
             s5_title: "5. 单文件上传",
-            s5_desc: "快速分享单个文件。",
-            s5_warn_title: "⚠️ 注意: 不要与文件夹共享混淆",
-            s5_warn_desc: "不要在此将文件添加到已通过'多文件上传'共享的文件夹。此文件不会出现在旧链接中。",
-            s5_img_alt: "[单文件上传过程]",
-            s5_feat1: "选择文件: 拖放或 [选择文件]。",
+            s5_desc: "快速分享单文件。",
+            s5_warn_title: "⚠️ 注意: 不要混淆",
+            s5_warn_desc: "不要在此向'多文件'文件夹添加文件。会生成独立链接。",
+            s5_img_alt: "[单文件上传过程 (GIF)]",
+            s5_feat1: "选择文件: 拖放或按钮。",
             s5_feat2: "密码: 可单独设置。",
-            s5_feat3: "链接: 完成后底部自动生成。",
-            s5_note: "※ 此处路径与多文件标签页分开保存。",
-            s6_title: "6. 多文件上传 (核心功能)",
-            s6_desc: "通过一个链接分享多个文件。强烈推荐。",
-            s6_img_alt: "[多文件上传过程]",
-            s6_list_title: "文件列表管理",
+            s5_feat3: "链接: 底部自动生成。",
+            s5_note: "※ 路径与多文件标签页分开保存。",
+            s6_title: "6. 多文件上传 (核心)",
+            s6_desc: "分享整个文件夹。推荐。",
+            s6_img_alt: "[多文件上传过程 (GIF)]",
+            s6_list_title: "列表管理",
             s6_add: "添加: 拖放或 [Add Files]。",
-            s6_gray: "灰色: 服务器上已有的文件。",
-            s6_white: "白色: 您刚添加的文件 (待传)。",
-            s6_clear: "清除: [Clear List] 仅清除白色待传文件。",
+            s6_gray: "灰色: 服务器已有。",
+            s6_white: "白色: 新添加 (待传)。",
+            s6_clear: "清除: [Clear List] 仅除白色。",
             s6_btn_title: "重要: 按钮区别",
             btn_upload: "上传并共享",
-            desc_upload: ": 首次使用。上传并创建新链接 (密码)。",
+            desc_upload: ": 首次用。创建新链接 (密码)。",
             btn_append: "追加上传",
-            desc_append: ": 添加文件。保持现有链接和密码。",
-            s6_popup: "※ 为安全起见会弹出确认。",
+            desc_append: ": 添加文件。保持现有链接。",
+            s6_popup: "※ 弹出确认窗口以保安全。",
             s7_title: "7. 管理与链接查询",
             s7_desc: "管理文件或找回链接。",
             s7_img_alt: "[管理标签页 (①左树 / ②右表)]",
-            s7_feat1: "菜单 (① 左侧): 右键点击 [刷新], [重命名], [删除]。",
-            s7_feat2: "删除 (② 右侧): 选中文件点击 [删除文件]。",
-            s7_feat3: "查询: 点击 [查询链接] 查看旧地址。",
+            s7_feat1: "① 菜单 (左): 右键 [刷新], [重命名], [删除]。",
+            s7_feat2: "② 删除 (右): 选中文件点击 [删除]。",
+            s7_feat3: "查询: 点击 [查询链接]看旧地址。",
             badge_caution: "注意",
-            s7_feat4: "生成: <span class='badge bg-red'>注意</span> [生成链接] 会覆盖为新链接。"
+            s7_feat4: "生成: <span class='badge bg-red'>注意</span> [生成链接] 会覆盖设置。"
         },
         jp: {
             s1_title: "1. NASおよびSmart NAS Tool紹介",
             s1_nas_def: "NASとは？",
-            s1_nas_desc: "インターネットに接続された大容量中央ストレージです。複数人が同時アクセス可能。",
+            s1_nas_desc: "インターネット接続の大容量ストレージ。複数人で同時アクセス可能な社内クラウドです。",
             s1_benefit_title: "💡 主なメリット",
             s1_benefit1: "データ資産化: PC故障時もデータ安全。",
             s1_benefit2: "二重保護 (RAID): HDD故障時も安心。",
             s1_benefit3: "スマート共有: リンク送信で効率化。",
             s1_email_vs_link: "メール添付 vs リンク共有",
-            s1_compare_desc: "直接添付はサーバー負荷の原因になります。",
+            s1_compare_desc: "直接添付はサーバー負荷の原因。",
             th_email: "メール添付 (従来)",
             th_link: "NASリンク (推奨)",
-            td_email_1: "サーバー過負荷 (100MBトラフィック)",
+            td_email_1: "サーバー過負荷 (トラフィック大)",
             td_link_1: "<strong>トラフィック激減</strong>",
-            td_email_2: "遅い・容量制限 (外部網)",
+            td_email_2: "遅い・制限あり (外部網)",
             td_link_2: "<strong>超高速 (社内網)</strong>",
             s1_tool_compare: "Smart NAS Toolの強み",
             s1_tool_desc: "Webアクセスの複雑さを解消した専用ソフト。",
             th_type: "区分",
             th_web: "Webブラウザ",
             th_app: "Smart NAS Tool v2.0",
-            td_access: "接続方法",
+            td_access: "接続",
             td_web_access: "アドレス -> ID/PW -> ログイン (複雑)",
             td_app_access: "<strong>アプリ実行 -> 自動ログイン (簡単)</strong>",
             td_link: "リンク生成",
             td_web_link: "アップロード -> 設定 -> 保存 (1-2分)",
             td_app_link: "<strong>即時自動生成 (10-20秒)</strong>",
+            s1_img_alt: "[画像: Web vs アプリ 比較表]",
             s2_title: "2. ダウンロードとインストール",
             s2_desc: "まずプログラムをインストールしてください。",
-            s2_img_alt: "[インストール手順]",
-            s2_step1: "リンクまたはメールから Smart_NAS_Tool_Setup.exe をダウンロード。",
-            s2_step2: "ダウンロードしたファイルを実行。",
-            s2_step3: "案内に従って完了するとデスクトップにアイコンが作成されます。",
+            s2_img_alt: "[インストール手順 (GIF)]",
+            s2_step1: "Smart_NAS_Tool_Setup.exe をダウンロード。",
+            s2_step2: "ファイルを実行。",
+            s2_step3: "案内に従って完了。",
             s3_title: "3. 初期設定とログイン",
             s3_sub1: "パスワード変更 (初回必須)",
-            s3_pw_desc: "セキュリティのため初期パスワードは変更が必要です。",
-            s3_img_alt: "[パスワード変更手順]",
-            s3_pw_step1: "Webリンクに接続してログイン (初回は遅い場合があります)",
-            s3_pw_step2: "右上の <strong>ユーザーアイコン</strong> をクリック。",
-            s3_pw_step3: "<strong>個人 (Personal)</strong> メニューを選択。",
-            s3_pw_step4: "<strong>パスワード変更</strong> ボタンを押して設定。",
+            s3_pw_desc: "セキュリティのため変更が必要です。",
+            s3_img_alt: "[パスワード変更手順 (GIF)]",
+            s3_pw_step1: "Webログイン (初回は遅い場合あり)。",
+            s3_pw_step2: "右上の <strong>ユーザーアイコン</strong> クリック。",
+            s3_pw_step3: "<strong>個人</strong> メニュー選択。",
+            s3_pw_step4: "<strong>パスワード変更</strong> ボタンを押す。",
             s3_warn_title: "規則:",
             s3_warn_desc: "英大文字、小文字、数字を含む8文字以上。",
             s3_sub2: "プログラムログイン",
             s3_img_alt2: "[ログイン画面]",
             s3_mode_title: "⚠️ 接続モード選択 (重要)",
-            s3_mode1: "内部 (Local): NASがある [KMJ1 法人] 社内でのみ使用。最速。",
-            s3_mode2: "外部 (Public): 他法人、自宅、出張先などでは必ずこちらを選択。",
+            s3_mode1: "内部 (Local): [KMJ1 法人] 社内でのみ使用。",
+            s3_mode2: "外部 (Public): 他法人、自宅、出張先で使用。",
             s3_log1: "言語: 右上で変更。",
-            s3_log2: "入力: IP, ID, 新しいパスワード。",
-            s3_log3: "保存: [ログイン & 保存] で次回から自動ログイン。",
+            s3_log2: "入力: IP, ID, 新パスワード。",
+            s3_log3: "保存: [ログイン & 保存]。",
             s4_title: "4. フォルダ選択と新規作成",
-            s4_desc: "アップロード先を指定したり、新しいフォルダを作る方法です。",
-            s4_img_alt: "[フォルダ選択・作成手順]",
-            s4_step1: "アップロードタブのパス横 [...] ボタンをクリック。",
+            s4_desc: "場所指定や新規作成の方法。",
+            s4_img_alt: "[フォルダ選択・作成手順 (GIF)]",
+            s4_step1: "パス横 [...] ボタンをクリック。",
             s4_step2: "フォルダ選択: 親フォルダをクリック。",
-            s4_step3: "新規作成: 左下 [新規フォルダ] を押し名前入力。",
-            s4_step4: "最終フォルダ(青色)を選び [選択] をクリック。",
+            s4_step3: "新規作成: [新規フォルダ], 名前入力。",
+            s4_step4: "最終フォルダ(青)を選び [選択]。",
             s5_title: "5. 単一ファイルアップロード",
-            s5_desc: "1つのファイルを素早く共有します。",
-            s5_warn_title: "⚠️ 注意: フォルダ共有と混ぜないで",
-            s5_warn_desc: "「複数アップロード」で共有中のフォルダに、ここでファイルを追加しないでください。リンクに反映されません。",
-            s5_img_alt: "[単一ファイルアップロード手順]",
-            s5_feat1: "選択: ドラッグ＆ドロップまたは [ファイル検索]。",
-            s5_feat2: "パスワード: ファイルごとに設定可能。",
-            s5_feat3: "リンク: 完了時に下部に自動生成。",
-            s5_note: "※ ここのパスは複数タブとは別に保存されます。",
+            s5_desc: "1ファイルを素早く共有。",
+            s5_warn_title: "⚠️ 注意: 混ぜないで",
+            s5_warn_desc: "「複数アップロード」フォルダにここで追加しないでください。リンクが別になります。",
+            s5_img_alt: "[単一ファイルアップロード手順 (GIF)]",
+            s5_feat1: "選択: ドラッグまたはボタン。",
+            s5_feat2: "パスワード: 個別に設定可能。",
+            s5_feat3: "リンク: 下部に自動生成。",
+            s5_note: "※ パスは複数タブとは別に保存されます。",
             s6_title: "6. 複数ファイルアップロード (主要)",
-            s6_desc: "フォルダごと共有します。推奨。",
-            s6_img_alt: "[複数ファイルアップロード手順]",
+            s6_desc: "フォルダごと共有。推奨。",
+            s6_img_alt: "[複数ファイルアップロード手順 (GIF)]",
             s6_list_title: "リスト管理",
             s6_add: "追加: ドラッグまたは [Add Files]。",
-            s6_gray: "灰色: 既にサーバーにあるファイル。",
-            s6_white: "白色: 追加した待機中のファイル。",
-            s6_clear: "クリア: [Clear List] は白色ファイルのみ消去。",
+            s6_gray: "灰色: サーバーにあるファイル。",
+            s6_white: "白色: 追加した待機ファイル。",
+            s6_clear: "クリア: [Clear List] は白色のみ消去。",
             s6_btn_title: "重要: ボタンの違い",
             btn_upload: "アップロード & 共有",
-            desc_upload: ": 初回用。アップロードして新しいリンク(パスワード)を作成。",
+            desc_upload: ": 初回用。新しいリンク(パスワード)を作成。",
             btn_append: "追加アップロード",
-            desc_append: ": 追加用。既存のリンクとパスワードを維持。",
-            s6_popup: "※ 安全のため確認ポップアップが出ます。",
+            desc_append: ": 追加用。既存のリンクを維持。",
+            s6_popup: "※ 安全確認ポップアップが出ます。",
             s7_title: "7. 管理とリンク確認",
-            s7_desc: "ファイルの削除やリンク再確認。",
+            s7_desc: "削除やリンク再確認。",
             s7_img_alt: "[ファイル管理タブ (①左ツリー / ②右リスト)]",
-            s7_feat1: "メニュー (① 左): 右クリックで [更新], [名前変更], [削除]。",
-            s7_feat2: "削除 (② 右): ファイルを選び [ファイル削除]。",
-            s7_feat3: "確認: [リンク確認] で既存アドレスを表示。",
+            s7_feat1: "① メニュー (左): 右クリック [更新], [名前変更], [削除]。",
+            s7_feat2: "② 削除 (右): ファイルを選び [ファイル削除]。",
+            s7_feat3: "確認: [リンク確認] で既存アドレス表示。",
             badge_caution: "注意",
-            s7_feat4: "作成: <span class='badge bg-red'>注意</span> [リンク作成] は新しいリンクで上書きします。"
+            s7_feat4: "作成: <span class='badge bg-red'>注意</span> [リンク作成] は上書きします。"
         }
     };
 
